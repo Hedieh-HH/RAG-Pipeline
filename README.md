@@ -87,8 +87,6 @@ cp .env.example .env
 
 Edit `.env` with your Azure credentials and service URLs (see `.env.example` for all required variables).
 
-> The spaCy model (`en_core_web_sm`) is downloaded automatically the first time the chunker tests run.
-
 ---
 
 ## Running the pipeline
@@ -116,6 +114,8 @@ Pure function tests (no credentials required):
 ```bash
 uv run python -m unittest discover -s tests -p "test_*.py" -v
 ```
+
+> The spaCy model (`en_core_web_sm`) is downloaded automatically the first time the chunker tests run.
 
 Integration tests (require real Azure credentials and running services):
 
