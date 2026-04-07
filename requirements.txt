@@ -1,0 +1,26 @@
+# Azure
+azure-ai-documentintelligence
+azure-storage-blob
+
+# OpenAI
+openai>=2.30.0
+
+# Vector store
+qdrant-client
+
+# Database
+pymongo
+
+# Embeddings / NLP
+tiktoken
+spacy>=3.8.14
+
+# Data validation & settings
+pydantic>=2.12.5
+pydantic-settings>=2.13.1
+python-dotenv
+
+# Utilities
+tenacity>=9.1.4
+rich>=14.3.3
+

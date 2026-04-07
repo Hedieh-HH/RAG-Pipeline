@@ -1,0 +1,34 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Environment / secrets — never commit
+.env
+
+# Pipeline data artefacts
+data/
+
+# Qdrant local storage
+qdrant_data/
+
+# Test & coverage artefacts
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Logs
+*.log
+
+# macOS
+.DS_Store
+
+# test files
+rag_test.py
