@@ -1,4 +1,4 @@
-# MyRAG
+# ragcore
 
 A production-style **Retrieval-Augmented Generation (RAG)** ingestion pipeline built on Azure services. It reads PDF documents from Azure Blob Storage, parses them with Azure Document Intelligence, chunks them into semantically coherent pieces, embeds them with Azure OpenAI, and indexes them in a Qdrant vector store — ready to be queried by any RAG application.
 
@@ -6,23 +6,29 @@ A production-style **Retrieval-Augmented Generation (RAG)** ingestion pipeline b
 
 ## Architecture
 
-```
-Azure Blob Storage
-       │
-       ▼
-  BlobStorageClient          download PDFs → local disk
-       │
-       ▼
-DocumentIntelligenceParser   extract sections, paragraphs, tables
-       │
-       ▼
-     Chunker                 sentence-aware sliding window chunking
-       │
-       ▼
-  EmbeddingClient            batch embed via Azure OpenAI
-       │
-       ▼
-   QdrantIndexer             upsert vectors + metadata payload
+```mermaid
+flowchart TD
+    A[Azure Blob Storage] -->|download PDFs| B[BlobStorageClient]
+    B -->|local PDFs| C[DocumentIntelligenceParser]
+    C -->|sections, paragraphs, tables| D[Chunker]
+    D -->|sentence-aware chunks| E[EmbeddingClient]
+    E -->|embedded vectors| F[QdrantIndexer]
+    F -->|upsert vectors + metadata| G[(Qdrant)]
+
+    B -.->|track state| H[(MongoDB)]
+    C -.->|update state| H
+    D -.->|update state| H
+    E -.->|update state| H
+    F -.->|mark indexed| H
+
+    style A fill:#7B9CB3,color:#fff,stroke:none
+    style B fill:#8AABB8,color:#fff,stroke:none
+    style C fill:#8AABB8,color:#fff,stroke:none
+    style D fill:#8AABB8,color:#fff,stroke:none
+    style E fill:#8AABB8,color:#fff,stroke:none
+    style F fill:#8AABB8,color:#fff,stroke:none
+    style G fill:#9B8EA8,color:#fff,stroke:none
+    style H fill:#7A9E9F,color:#fff,stroke:none
 ```
 
 Pipeline state is tracked per-document in **MongoDB** so re-runs skip already-indexed files (ETag-based idempotency).
@@ -70,19 +76,18 @@ Set `QDRANT__URL=http://localhost:6333` in your `.env` file.
 ```bash
 # Clone and enter the project
 git clone <repo-url>
-cd MyRag
+cd RAG-Pipeline
 
 # Install dependencies
 uv sync
-
-# Download the spaCy language model (used for sentence splitting)
-uv run python -m spacy download en_core_web_sm
 
 # Copy and fill in your environment variables
 cp .env.example .env
 ```
 
 Edit `.env` with your Azure credentials and service URLs (see `.env.example` for all required variables).
+
+> The spaCy model (`en_core_web_sm`) is downloaded automatically the first time the chunker tests run.
 
 ---
 
