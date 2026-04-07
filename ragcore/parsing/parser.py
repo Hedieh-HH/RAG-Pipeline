@@ -12,7 +12,7 @@ from azure.ai.documentintelligence.models import (
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import AzureError, HttpResponseError
 
-from myrag.models import LocalDocument, ParsedDocument, ParsedElement, Section
+from ragcore.models import LocalDocument, ParsedDocument, ParsedElement, Section
 
 logger = logging.getLogger(__name__)
 

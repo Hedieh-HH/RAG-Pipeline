@@ -20,8 +20,8 @@ load_dotenv(Path(__file__).parent.parent.parent / ".env")
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from myrag.embeddings.client import EmbeddingClient
-from myrag.models import Chunk, ChunkMetadata, EmbeddedChunk
+from ragcore.embeddings.client import EmbeddingClient
+from ragcore.models import Chunk, ChunkMetadata, EmbeddedChunk
 
 
 # Helpers
@@ -102,7 +102,7 @@ class TestEmbeddingClientIntegration(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        from myrag.config import get_settings
+        from ragcore.config import get_settings
 
         settings = get_settings()
         cls.client = EmbeddingClient(

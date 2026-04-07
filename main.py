@@ -1,8 +1,8 @@
 import logging
 import sys
 
-from myrag.config import get_settings
-from myrag.pipeline import Pipeline
+from ragcore.config import get_settings
+from ragcore.pipeline import Pipeline
 
 
 def _setup_logging(level: str) -> None:

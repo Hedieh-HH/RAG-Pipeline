@@ -1,10 +1,11 @@
 import logging
 
+from httpx import ConnectError, TimeoutException
 from qdrant_client import QdrantClient
-from qdrant_client.http.exceptions import UnexpectedResponse
+from qdrant_client.http.exceptions import ResponseHandlingException, UnexpectedResponse
 from qdrant_client.models import Distance, PointStruct, VectorParams
 
-from myrag.models import EmbeddedChunk, QdrantPayload
+from ragcore.models import EmbeddedChunk, QdrantPayload
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +51,12 @@ class QdrantIndexer:
 
     def __enter__(self) -> "QdrantIndexer":
         self._client = QdrantClient(url=self._url)
-        logger.debug("Connected to Qdrant at '%s'", self._url)
+        try:
+            self._client.get_collections()
+            logger.debug("Connected to Qdrant at '%s'.", self._url)
+        except (ConnectError, TimeoutException, ResponseHandlingException) as e:
+            logger.error("Cannot reach Qdrant at '%s': %s", self._url, e)
+            raise
         return self
 
     def __exit__(self, *_: object) -> None:
@@ -122,6 +128,14 @@ class QdrantIndexer:
                     collection_name=self._collection_name,
                     points=points,
                 )
+            except (ConnectError, TimeoutException, ResponseHandlingException) as e:
+                logger.error(
+                    "Qdrant connection lost during upsert at batch index %d (doc_id: '%s'): %s",
+                    batch_start,
+                    batch[0].chunk.metadata.doc_id,
+                    e,
+                )
+                raise
             except UnexpectedResponse as e:
                 logger.error(
                     "Qdrant upsert failed for batch starting at index %d (doc_id: '%s'): %s",

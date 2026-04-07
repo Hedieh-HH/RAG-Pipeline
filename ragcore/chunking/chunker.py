@@ -23,24 +23,29 @@ import logging
 import re
 from uuid import UUID
 
+import spacy
 import tiktoken
 
-from myrag.models import Chunk, ChunkMetadata, ParsedDocument, ParsedElement, Section
+from ragcore.models import Chunk, ChunkMetadata, ParsedDocument, ParsedElement, Section
 
 logger = logging.getLogger(__name__)
 
 _ENCODING = tiktoken.get_encoding("cl100k_base")
 _SENTENCE_START = re.compile(r"[.!?]\s+")
+_NLP = None
 
-try:
-    import spacy
 
-    _NLP = spacy.load("en_core_web_sm")
-except OSError:
-    raise RuntimeError(
-        "spaCy model 'en_core_web_sm' not found. "
-        "Run: python -m spacy download en_core_web_sm"
-    )
+def _get_nlp():
+    global _NLP
+    if _NLP is None:
+        try:
+            _NLP = spacy.load("en_core_web_sm")
+        except OSError:
+            raise RuntimeError(
+                "spaCy model 'en_core_web_sm' not found. "
+                "Run: python -m spacy download en_core_web_sm"
+            )
+    return _NLP
 
 
 def _count_tokens(text: str) -> int:
@@ -48,7 +53,7 @@ def _count_tokens(text: str) -> int:
 
 
 def _split_sentences(text: str) -> list[str]:
-    return [sent.text.strip() for sent in _NLP(text).sents if sent.text.strip()]
+    return [sent.text.strip() for sent in _get_nlp()(text).sents if sent.text.strip()]
 
 
 def _normalize_heading(heading: str) -> str:

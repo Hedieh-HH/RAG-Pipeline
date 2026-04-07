@@ -19,8 +19,8 @@ load_dotenv(Path(__file__).parent.parent.parent / ".env")
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from myrag.models import LocalDocument, ParsedDocument, ParsedElement, Section
-from myrag.parsing.parser import (
+from ragcore.models import LocalDocument, ParsedDocument, ParsedElement, Section
+from ragcore.parsing.parser import (
     DocumentIntelligenceParser,
     _clean_text,
     _table_to_markdown,
@@ -178,9 +178,9 @@ class TestParserIntegration(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        from myrag.config import DocIntelligenceSettings
+        from ragcore.config import DocIntelligenceSettings
 
-        from myrag.config import LocalStorageSettings
+        from ragcore.config import LocalStorageSettings
 
         doc_settings = DocIntelligenceSettings()  # type: ignore[call-arg]
         cls.parser = DocumentIntelligenceParser(

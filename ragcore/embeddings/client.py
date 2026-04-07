@@ -9,7 +9,7 @@ from tenacity import (
     before_sleep_log,
 )
 
-from myrag.models import Chunk, EmbeddedChunk
+from ragcore.models import Chunk, EmbeddedChunk
 
 logger = logging.getLogger(__name__)
 

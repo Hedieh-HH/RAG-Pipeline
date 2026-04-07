@@ -20,13 +20,21 @@ load_dotenv(Path(__file__).parent.parent.parent / ".env")
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from myrag.chunking.chunker import (
+from ragcore.chunking.chunker import (
     Chunker,
     _normalize_heading,
     _split_sentences,
     _count_tokens,
 )
-from myrag.models import Chunk, ParsedDocument, ParsedElement, Section
+from ragcore.models import Chunk, ParsedDocument, ParsedElement, Section
+
+
+def setUpModule():
+    import subprocess
+    subprocess.run(
+        [sys.executable, "-m", "spacy", "download", "en_core_web_sm"],
+        check=True,
+    )
 
 
 # Helpers — build minimal test objects without Azure SDK dependencies
@@ -236,9 +244,9 @@ class TestChunkerIntegration(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        from myrag.config import DocIntelligenceSettings, LocalStorageSettings
-        from myrag.models import LocalDocument
-        from myrag.parsing.parser import DocumentIntelligenceParser
+        from ragcore.config import DocIntelligenceSettings, LocalStorageSettings
+        from ragcore.models import LocalDocument
+        from ragcore.parsing.parser import DocumentIntelligenceParser
 
         doc_settings = DocIntelligenceSettings()  # type: ignore[call-arg]
         parser = DocumentIntelligenceParser(

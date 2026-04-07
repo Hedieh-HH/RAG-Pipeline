@@ -4,13 +4,13 @@ from dataclasses import dataclass
 import pymongo
 import pymongo.collection
 
-from myrag.chunking.chunker import Chunker
-from myrag.config import Settings
-from myrag.embeddings.client import EmbeddingClient
-from myrag.models import LocalDocument, DocumentRecord
-from myrag.parsing.parser import DocumentIntelligenceParser
-from myrag.storage.blob_client import BlobStorageClient
-from myrag.vector_store.qdrant import QdrantIndexer
+from ragcore.chunking.chunker import Chunker
+from ragcore.config import Settings
+from ragcore.embeddings.client import EmbeddingClient
+from ragcore.models import LocalDocument, DocumentRecord
+from ragcore.parsing.parser import DocumentIntelligenceParser
+from ragcore.storage.blob_client import BlobStorageClient
+from ragcore.vector_store.qdrant import QdrantIndexer
 
 logger = logging.getLogger(__name__)
 
@@ -75,6 +75,12 @@ class Pipeline:
 
         # Set up MongoDB manifest
         mongo_client = pymongo.MongoClient(s.mongo.uri)
+        try:
+            mongo_client.admin.command("ping")
+            logger.debug("Connected to MongoDB at '%s'.", s.mongo.uri)
+        except pymongo.errors.ConnectionFailure as e:
+            logger.error("Cannot reach MongoDB at '%s': %s", s.mongo.uri, e)
+            raise
         db = mongo_client[s.mongo.database]
         document_status_collection = DocumentStatusStore(db[s.mongo.collection])
 

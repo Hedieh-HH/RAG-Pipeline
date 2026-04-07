@@ -20,8 +20,8 @@ load_dotenv(Path(__file__).parent.parent.parent / ".env")
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from myrag.models import Chunk, ChunkMetadata, EmbeddedChunk, QdrantPayload
-from myrag.vector_store.qdrant import QdrantIndexer
+from ragcore.models import Chunk, ChunkMetadata, EmbeddedChunk, QdrantPayload
+from ragcore.vector_store.qdrant import QdrantIndexer
 
 
 # Helpers
@@ -61,7 +61,7 @@ class TestQdrantIndexerIntegration(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        from myrag.config import get_settings
+        from ragcore.config import get_settings
 
         settings = get_settings()
         cls.url = settings.qdrant.url
@@ -71,7 +71,12 @@ class TestQdrantIndexerIntegration(unittest.TestCase):
             vector_size=cls._VECTOR_SIZE,
         )
         cls.indexer.__enter__()
-        cls.indexer.ensure_collection()
+        try:
+            cls.indexer.ensure_collection()
+        except Exception as e:
+            raise unittest.SkipTest(
+                f"Qdrant is not reachable at {cls.url} — start it before running integration tests. ({e})"
+            )
 
     @classmethod
     def tearDownClass(cls) -> None:

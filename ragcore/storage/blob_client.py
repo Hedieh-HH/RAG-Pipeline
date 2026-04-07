@@ -9,7 +9,7 @@ from azure.core.exceptions import (
 )
 from azure.storage.blob import BlobServiceClient
 
-from myrag.models import LocalDocument
+from ragcore.models import LocalDocument
 
 logger = logging.getLogger(__name__)
 

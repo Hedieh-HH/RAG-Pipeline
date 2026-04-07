@@ -123,7 +123,7 @@ RUN_INTEGRATION=1 uv run python -m unittest discover -s tests -p "test_*.py" -v
 ## Project structure
 
 ```
-myrag/
+ragcore/
 ├── storage/        BlobStorageClient — download PDFs from Azure
 ├── parsing/        DocumentIntelligenceParser — extract structure from PDFs
 ├── chunking/       Chunker — sentence-aware sliding window

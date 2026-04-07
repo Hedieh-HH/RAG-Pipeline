@@ -20,15 +20,15 @@ load_dotenv(Path(__file__).parent.parent.parent / ".env")
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from myrag.models import LocalDocument
-from myrag.storage.blob_client import BlobStorageClient
+from ragcore.models import LocalDocument
+from ragcore.storage.blob_client import BlobStorageClient
 
 
 @unittest.skipUnless(os.getenv("RUN_INTEGRATION"), "Set RUN_INTEGRATION=1 to run")
 class TestBlobClientIntegration(unittest.TestCase):
 
     def setUp(self) -> None:
-        from myrag.config import BlobSettings, LocalStorageSettings
+        from ragcore.config import BlobSettings, LocalStorageSettings
 
         blob_settings = BlobSettings()  # type: ignore[call-arg]
         local_settings = LocalStorageSettings(pdf_dir=Path("./data/pdfs"))
@@ -97,7 +97,7 @@ class TestBlobClientIntegration(unittest.TestCase):
 
     def test_fetch_all_source_blob_contains_container(self) -> None:
         """container_name must match the configured container."""
-        from myrag.config import BlobSettings
+        from ragcore.config import BlobSettings
 
         container = BlobSettings().container_name  # type: ignore[call-arg]
         documents = self.client.fetch_all()

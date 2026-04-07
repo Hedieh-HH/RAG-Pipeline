@@ -6,7 +6,7 @@ from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
 
-from myrag.utils import utcnow
+from ragcore.utils import utcnow
 
 
 class LocalDocument(BaseModel):
